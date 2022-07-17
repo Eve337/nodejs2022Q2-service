@@ -43,7 +43,7 @@ export class ArtistsService {
   }
 
   remove(id: string) {
-    getValidatedEntity(id, this.db.artists, 'User');
+    getValidatedEntity(id, this.db.artists, 'Artist');
     this.db.artists = removeEntity(id, this.db.artists);
   }
 }

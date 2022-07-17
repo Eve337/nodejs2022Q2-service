@@ -9,7 +9,6 @@ export const getValidatedEntity = (
   if (!uuidValidate(id)) {
     throw new BadRequestException('UUID is not valid');
   }
-  console.log(entityDb);
   const entity = entityDb.find((current: { id: string }) => current.id === id);
 
   if (!entity) {

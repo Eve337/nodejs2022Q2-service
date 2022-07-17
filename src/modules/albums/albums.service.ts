@@ -1,15 +1,28 @@
 import { Injectable } from '@nestjs/common';
+import { InMemoryDB } from 'src/utils/InMemoryDB';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
-
+import { v4 as uuidv4 } from 'uuid';
+import { getValidatedEntity, removeEntity } from 'src/utils/utils';
 @Injectable()
 export class AlbumsService {
+  db: typeof InMemoryDB;
+  constructor() {
+    this.db = InMemoryDB;
+  }
+
   create(createAlbumDto: CreateAlbumDto) {
-    return 'This action adds a new album';
+    const newAlbum = {
+      ...createAlbumDto,
+      id: uuidv4(),
+    };
+
+    this.db.albums.push(newAlbum);
+    return newAlbum;
   }
 
   findAll() {
-    return `This action returns all albums`;
+    return this.db.albums;
   }
 
   findOne(id: string) {
@@ -17,10 +30,19 @@ export class AlbumsService {
   }
 
   update(id: string, updateAlbumDto: UpdateAlbumDto) {
-    return `This action updates a #${id} album`;
+    const updatedAlbum: UpdateAlbumDto = getValidatedEntity(
+      id,
+      this.db.albums,
+      'Album',
+    );
+    updatedAlbum.name = updateAlbumDto.name;
+    updatedAlbum.year = updateAlbumDto.year;
+    if (updatedAlbum.artistId) updatedAlbum.artistId = updateAlbumDto.artistId;
+    return updatedAlbum;
   }
 
   remove(id: string) {
-    return `This action removes a #${id} album`;
+    getValidatedEntity(id, this.db.albums, 'Album');
+    this.db.users = removeEntity(id, this.db.albums);
   }
 }
