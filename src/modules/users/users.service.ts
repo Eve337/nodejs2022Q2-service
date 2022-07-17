@@ -39,6 +39,8 @@ export class UsersService {
       throw new ForbiddenException('Old password is wrong');
     } else {
       currentUser.password = updatePasswordDto.newPassword;
+      currentUser.updatedAt = +new Date();
+      currentUser.version = ++currentUser.version;
     }
     return currentUser;
   }

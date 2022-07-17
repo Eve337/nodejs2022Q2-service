@@ -13,7 +13,6 @@ export const getValidatedEntity = (
   nameOfEntity: string,
 ) => {
   checkUuid(id);
-
   const entity = entityDb.find((current: { id: string }) => current.id === id);
 
   if (!entity) {
@@ -25,6 +24,9 @@ export const getValidatedEntity = (
 
 export const removeEntity = (id: string, entityBd: any) =>
   entityBd.filter((entity: { id: string }) => entity.id !== id);
+
+export const removeEntityFav = (id: string, entityBd: any) =>
+  entityBd.filter((currId) => currId !== id);
 
 export const removeEntityAFromEntityB = (
   idEntityA: any,

@@ -34,7 +34,7 @@ export class AlbumsService {
   }
 
   findOne(id: string) {
-    return `This action returns a #${id} album`;
+    return getValidatedEntity(id, this.db.albums, 'Album');
   }
 
   update(id: string, updateAlbumDto: UpdateAlbumDto) {
@@ -45,15 +45,16 @@ export class AlbumsService {
     );
     updatedAlbum.name = updateAlbumDto.name;
     updatedAlbum.year = updateAlbumDto.year;
-    if (updatedAlbum.artistId) updatedAlbum.artistId = updateAlbumDto.artistId;
+    if (updateAlbumDto.artistId)
+      updatedAlbum.artistId = updateAlbumDto.artistId;
     return updatedAlbum;
   }
 
   remove(id: string) {
     getValidatedEntity(id, this.db.albums, 'Album');
-    this.db.users = removeEntity(id, this.db.albums);
+    this.db.albums = removeEntity(id, this.db.albums);
     this.trackService.removeAlbumIdFromTrack(id);
-    this.favService.deleteAlbumFromFav(id);
+    this.favService.deleteAlbumFromFav(id, false);
   }
 
   removeArtistFromAlbum(id: string) {

@@ -21,6 +21,8 @@ export class TracksService {
   }
   create(createTrackDto: CreateTrackDto) {
     const newTrack = {
+      artistId: null,
+      albumId: null,
       ...createTrackDto,
       id: uuidv4(),
     };
@@ -51,12 +53,13 @@ export class TracksService {
     if (updateTrackDto.albumId) {
       updatedTrack.albumId = updateTrackDto.albumId;
     }
+    return updatedTrack;
   }
 
   remove(id: string) {
     getValidatedEntity(id, this.db.tracks, 'Track');
-    this.db.artists = removeEntity(id, this.db.tracks);
-    this.favouriteService.deleteTrackFromFav(id);
+    this.db.tracks = removeEntity(id, this.db.tracks);
+    this.favouriteService.deleteTrackFromFav(id, false);
   }
 
   removeAlbumIdFromTrack(id: string) {

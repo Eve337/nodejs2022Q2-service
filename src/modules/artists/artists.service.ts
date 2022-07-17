@@ -57,6 +57,6 @@ export class ArtistsService {
     this.db.artists = removeEntity(id, this.db.artists);
     this.trackService.removeArtistFromTrack(id);
     this.albumService.removeArtistFromAlbum(id);
-    this.favouriteService.deleteArtistFromFav(id);
+    this.favouriteService.deleteArtistFromFav(id, false);
   }
 }

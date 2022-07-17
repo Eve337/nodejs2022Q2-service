@@ -1,17 +1,46 @@
-import { findById, removeEntity } from 'src/utils/utils';
+import { artists, track } from './../../utils/InMemoryDB';
+import { ArtistsService } from './../artists/artists.service';
+import { findById, removeEntity, removeEntityFav } from 'src/utils/utils';
 import { checkUuid, getValidatedEntity } from './../../utils/utils';
-import { Injectable, UnprocessableEntityException } from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { InMemoryDB } from 'src/utils/InMemoryDB';
+import { AlbumsService } from '../albums/albums.service';
+import { TracksService } from '../tracks/tracks.service';
 
 @Injectable()
 export class FavouritesService {
   db: typeof InMemoryDB;
-  constructor() {
+  constructor(
+    @Inject(forwardRef(() => TracksService))
+    private readonly trackService: TracksService,
+    @Inject(forwardRef(() => AlbumsService))
+    private readonly albumService: AlbumsService,
+    @Inject(forwardRef(() => ArtistsService))
+    private readonly artistsService: ArtistsService,
+  ) {
     this.db = InMemoryDB;
   }
 
   findAll() {
-    return this.db.favourites;
+    const tracks = this.db.favourites.tracks.map((id) =>
+      this.trackService.findOne(id),
+    );
+    const albums = this.db.favourites.albums.map((id) =>
+      this.albumService.findOne(id),
+    );
+    const artists = this.db.favourites.artists.map((id) =>
+      this.artistsService.findOne(id),
+    );
+    return {
+      artists,
+      albums,
+      tracks,
+    };
   }
 
   addTrackToFav(id: string) {
@@ -24,9 +53,12 @@ export class FavouritesService {
     return currentTrack;
   }
 
-  deleteTrackFromFav(id: string) {
-    getValidatedEntity(id, this.db.favourites.tracks, 'Track');
-    removeEntity(id, this.db.favourites.tracks);
+  deleteTrackFromFav(id: string, isDirectReq: boolean) {
+    if (isDirectReq) checkUuid(id);
+    this.db.favourites = {
+      ...this.db.favourites,
+      tracks: removeEntityFav(id, this.db.favourites.tracks),
+    };
   }
 
   addArtistToFav(id: string) {
@@ -39,9 +71,13 @@ export class FavouritesService {
     return currentArtist;
   }
 
-  deleteArtistFromFav(id: string) {
-    getValidatedEntity(id, this.db.favourites.artists, 'Artist');
-    removeEntity(id, this.db.favourites.artists);
+  deleteArtistFromFav(id: string, isDirectReq: boolean) {
+    console.log(id);
+    if (isDirectReq) checkUuid(id);
+    this.db.favourites = {
+      ...this.db.favourites,
+      artists: removeEntityFav(id, this.db.favourites.artists),
+    };
   }
 
   addAlbumToFav(id: string) {
@@ -54,8 +90,13 @@ export class FavouritesService {
     return currentAlbum;
   }
 
-  deleteAlbumFromFav(id: string) {
-    getValidatedEntity(id, this.db.favourites.albums, 'Album');
-    removeEntity(id, this.db.favourites.albums);
+  deleteAlbumFromFav(id: string, isDirectReq: boolean) {
+    if (isDirectReq) checkUuid(id);
+    console.log(this.db.favourites);
+    this.db.favourites = {
+      ...this.db.favourites,
+      albums: removeEntityFav(id, this.db.favourites.albums),
+    };
+    console.log(this.db.favourites);
   }
 }
