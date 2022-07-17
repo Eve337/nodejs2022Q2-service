@@ -4,6 +4,7 @@ import { ArtistsModule } from './modules/artists/artists.module';
 import { FavouritesModule } from './modules/favourites/favourites.module';
 import { TracksModule } from './modules/tracks/tracks.module';
 import { UsersModule } from './modules/users/users.module';
+import { InMemoryDB } from './utils/InMemoryDB';
 
 @Module({
   imports: [
@@ -14,6 +15,6 @@ import { UsersModule } from './modules/users/users.module';
     FavouritesModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [InMemoryDB],
 })
 export class AppModule {}
