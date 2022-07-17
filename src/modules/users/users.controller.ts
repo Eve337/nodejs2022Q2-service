@@ -3,7 +3,7 @@ import {
   Get,
   Post,
   Body,
-  Patch,
+  Put,
   Param,
   Delete,
   HttpCode,
@@ -35,7 +35,7 @@ export class UsersController {
     return new User(this.usersService.findOne(id));
   }
   @UseInterceptors(ClassSerializerInterceptor)
-  @Patch(':id')
+  @Put(':id')
   async update(
     @Param('id') id: string,
     @Body() updateUserDto: UpdatePasswordDto,

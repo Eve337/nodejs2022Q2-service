@@ -1,14 +1,10 @@
 import { InMemoryDB } from './../../utils/InMemoryDB';
-import {
-  BadRequestException,
-  ForbiddenException,
-  Injectable,
-} from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-user.dto';
 import { v4 as uuidv4 } from 'uuid';
 import { User } from './model/user';
-import { getValidatedEntity } from 'src/utils/utils';
+import { getValidatedEntity, removeEntity } from 'src/utils/utils';
 @Injectable()
 export class UsersService {
   db: typeof InMemoryDB;
@@ -17,10 +13,6 @@ export class UsersService {
   }
 
   create(createUserDto: CreateUserDto) {
-    if (!createUserDto.login || !createUserDto.password) {
-      throw new BadRequestException('body does not contain required fields');
-    }
-
     const timestamp = +new Date();
     const newUser: User = {
       ...createUserDto,
@@ -53,6 +45,6 @@ export class UsersService {
 
   remove(id: string) {
     getValidatedEntity(id, this.db.users, 'User');
-    this.db.users = this.db.users.filter((user) => user.id !== id);
+    this.db.users = removeEntity(id, this.db.users);
   }
 }

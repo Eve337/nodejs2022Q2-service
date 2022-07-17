@@ -1,7 +1,8 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateUserDto } from './create-user.dto';
+import { IsNotEmpty } from 'class-validator';
 
 export class UpdatePasswordDto {
+  @IsNotEmpty({ message: 'The required newPassword field is missing' })
   newPassword: string;
+  @IsNotEmpty({ message: 'The required oldPassword field is missing' })
   oldPassword: string;
 }

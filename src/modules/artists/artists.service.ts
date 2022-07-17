@@ -1,26 +1,49 @@
 import { Injectable } from '@nestjs/common';
+import { InMemoryDB } from 'src/utils/InMemoryDB';
+import { getValidatedEntity, removeEntity } from 'src/utils/utils';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
+import { v4 as uuidv4 } from 'uuid';
+import { Artist } from './model/artist';
 
 @Injectable()
 export class ArtistsService {
+  db: typeof InMemoryDB;
+  constructor() {
+    this.db = InMemoryDB;
+  }
+
   create(createArtistDto: CreateArtistDto) {
-    return 'This action adds a new artist';
+    const newArtist = {
+      ...createArtistDto,
+      id: uuidv4(),
+    };
+
+    this.db.artists.push(newArtist);
+    return newArtist;
   }
 
   findAll() {
-    return `This action returns all artists`;
+    return this.db.artists;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} artist`;
+  findOne(id: string) {
+    return getValidatedEntity(id, this.db.artists, 'Artist');
   }
 
-  update(id: number, updateArtistDto: UpdateArtistDto) {
-    return `This action updates a #${id} artist`;
+  update(id: string, updateArtistDto: UpdateArtistDto) {
+    const updatedArtist: Artist = getValidatedEntity(
+      id,
+      this.db.artists,
+      'Artist',
+    );
+    updatedArtist.name = updateArtistDto.name;
+    updatedArtist.grammy = updateArtistDto.grammy;
+    return updatedArtist;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} artist`;
+  remove(id: string) {
+    getValidatedEntity(id, this.db.artists, 'User');
+    this.db.artists = removeEntity(id, this.db.artists);
   }
 }

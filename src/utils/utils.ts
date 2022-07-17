@@ -10,7 +10,7 @@ export const getValidatedEntity = (
     throw new BadRequestException('UUID is not valid');
   }
   console.log(entityDb);
-  const entity = entityDb.find((current) => current.id === id);
+  const entity = entityDb.find((current: { id: string }) => current.id === id);
 
   if (!entity) {
     throw new NotFoundException(`${nameOfEntity} is not found`);
@@ -18,3 +18,6 @@ export const getValidatedEntity = (
 
   return entity;
 };
+
+export const removeEntity = (id: string, entityBd: any) =>
+  entityBd.filter((entity: { id: string }) => entity.id !== id);
