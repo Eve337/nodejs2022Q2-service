@@ -1,3 +1,4 @@
+import { Exclude } from 'class-transformer';
 import { IsNumber, IsString } from 'class-validator';
 
 export class User {
@@ -6,6 +7,7 @@ export class User {
   @IsString()
   readonly login: string;
   @IsString()
+  @Exclude()
   password: string;
   @IsNumber()
   version: number;
@@ -13,4 +15,8 @@ export class User {
   createdAt: number;
   @IsNumber() // timestamp of creation
   updatedAt: number; // timestamp of last update
+
+  constructor(partial: Partial<User>) {
+    Object.assign(this, partial);
+  }
 }

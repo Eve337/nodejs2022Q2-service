@@ -3,11 +3,10 @@ import {
   BadRequestException,
   ForbiddenException,
   Injectable,
-  NotFoundException,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-user.dto';
-import { v4 as uuidv4, validate as uuidValidate } from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 import { User } from './model/user';
 import { getValidatedEntity } from 'src/utils/utils';
 @Injectable()
@@ -39,9 +38,7 @@ export class UsersService {
   }
 
   findOne(id: string) {
-    const copyDb = Object.assign({}, this.db);
-    console.log(copyDb);
-    return getValidatedEntity(id, copyDb.users, 'User');
+    return getValidatedEntity(id, this.db.users, 'User');
   }
 
   update(id: string, updatePasswordDto: UpdatePasswordDto) {
