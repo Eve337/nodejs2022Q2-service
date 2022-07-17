@@ -1,14 +1,22 @@
-import { Injectable } from '@nestjs/common';
+import { FavouritesService } from './../favourites/favourites.service';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
 import { v4 as uuidv4 } from 'uuid';
 import { InMemoryDB } from 'src/utils/InMemoryDB';
-import { getValidatedEntity, removeEntity } from 'src/utils/utils';
+import {
+  getValidatedEntity,
+  removeEntity,
+  removeEntityAFromEntityB,
+} from 'src/utils/utils';
 
 @Injectable()
 export class TracksService {
   db: typeof InMemoryDB;
-  constructor() {
+  constructor(
+    @Inject(forwardRef(() => FavouritesService))
+    private readonly favouriteService: FavouritesService,
+  ) {
     this.db = InMemoryDB;
   }
   create(createTrackDto: CreateTrackDto) {
@@ -48,5 +56,13 @@ export class TracksService {
   remove(id: string) {
     getValidatedEntity(id, this.db.tracks, 'Track');
     this.db.artists = removeEntity(id, this.db.tracks);
+    this.favouriteService.deleteTrackFromFav(id);
+  }
+
+  removeAlbumIdFromTrack(id: string) {
+    removeEntityAFromEntityB(id, this.db.tracks, 'albumId');
+  }
+  removeArtistFromTrack(id: string) {
+    removeEntityAFromEntityB(id, this.db.tracks, 'artistId');
   }
 }

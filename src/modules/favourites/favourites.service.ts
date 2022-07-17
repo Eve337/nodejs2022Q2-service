@@ -1,26 +1,61 @@
-import { Injectable } from '@nestjs/common';
-import { CreateFavouriteDto } from './dto/create-favourite.dto';
-import { UpdateFavouriteDto } from './dto/update-favourite.dto';
+import { findById, removeEntity } from 'src/utils/utils';
+import { checkUuid, getValidatedEntity } from './../../utils/utils';
+import { Injectable, UnprocessableEntityException } from '@nestjs/common';
+import { InMemoryDB } from 'src/utils/InMemoryDB';
 
 @Injectable()
 export class FavouritesService {
-  create(createFavouriteDto: CreateFavouriteDto) {
-    return 'This action adds a new favourite';
+  db: typeof InMemoryDB;
+  constructor() {
+    this.db = InMemoryDB;
   }
 
   findAll() {
-    return `This action returns all favourites`;
+    return this.db.favourites;
   }
 
-  findOne(id: string) {
-    return `This action returns a #${id} favourite`;
+  addTrackToFav(id: string) {
+    checkUuid(id);
+    const currentTrack = findById(id, this.db.tracks);
+    if (!currentTrack) {
+      throw new UnprocessableEntityException('id === trackId does not exist');
+    }
+    this.db.favourites.tracks.push(id);
+    return currentTrack;
   }
 
-  update(id: string, updateFavouriteDto: UpdateFavouriteDto) {
-    return `This action updates a #${id} favourite`;
+  deleteTrackFromFav(id: string) {
+    getValidatedEntity(id, this.db.favourites.tracks, 'Track');
+    removeEntity(id, this.db.favourites.tracks);
   }
 
-  remove(id: string) {
-    return `This action removes a #${id} favourite`;
+  addArtistToFav(id: string) {
+    checkUuid(id);
+    const currentArtist = findById(id, this.db.artists);
+    if (!currentArtist) {
+      throw new UnprocessableEntityException('id === artistId does not exist');
+    }
+    this.db.favourites.artists.push(id);
+    return currentArtist;
+  }
+
+  deleteArtistFromFav(id: string) {
+    getValidatedEntity(id, this.db.favourites.artists, 'Artist');
+    removeEntity(id, this.db.favourites.artists);
+  }
+
+  addAlbumToFav(id: string) {
+    checkUuid(id);
+    const currentAlbum = findById(id, this.db.albums);
+    if (!currentAlbum) {
+      throw new UnprocessableEntityException('id === albumId does not exist');
+    }
+    this.db.favourites.albums.push(id);
+    return currentAlbum;
+  }
+
+  deleteAlbumFromFav(id: string) {
+    getValidatedEntity(id, this.db.favourites.albums, 'Album');
+    removeEntity(id, this.db.favourites.albums);
   }
 }
