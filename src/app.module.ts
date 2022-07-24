@@ -15,6 +15,7 @@ import { InMemoryDB } from './utils/InMemoryDB';
     AlbumsModule,
     FavouritesModule,
     ConfigModule.forRoot(),
+    // DatabaseModule,
   ],
   controllers: [],
   providers: [InMemoryDB],
