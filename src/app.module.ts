@@ -6,6 +6,7 @@ import { FavouritesModule } from './modules/favourites/favourites.module';
 import { TracksModule } from './modules/tracks/tracks.module';
 import { UsersModule } from './modules/users/users.module';
 import { InMemoryDB } from './utils/InMemoryDB';
+import { DatabaseModule } from './database/database.module';
 
 @Module({
   imports: [
@@ -15,7 +16,7 @@ import { InMemoryDB } from './utils/InMemoryDB';
     AlbumsModule,
     FavouritesModule,
     ConfigModule.forRoot(),
-    // DatabaseModule,
+    DatabaseModule,
   ],
   controllers: [],
   providers: [InMemoryDB],
