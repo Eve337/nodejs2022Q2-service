@@ -42,7 +42,7 @@ export class ArtistsService {
   }
 
   update(id: string, updateArtistDto: UpdateArtistDto) {
-    const updatedArtist: Artist = getValidatedEntity(
+    const updatedArtist: any = getValidatedEntity(
       id,
       this.db.artists,
       'Artist',

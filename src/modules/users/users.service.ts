@@ -1,52 +1,40 @@
-import { InMemoryDB } from './../../utils/InMemoryDB';
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-user.dto';
-import { v4 as uuidv4 } from 'uuid';
-import { User } from './model/user';
 import { getValidatedEntity, removeEntity } from 'src/utils/utils';
+import { Repository } from 'typeorm';
+import { userSchema } from 'src/database/entities/user.entity';
+import { InjectRepository } from '@nestjs/typeorm';
 @Injectable()
 export class UsersService {
-  db: typeof InMemoryDB;
-  constructor() {
-    this.db = InMemoryDB;
+  constructor(
+    @InjectRepository(userSchema)
+    private readonly usersTable: Repository<userSchema>,
+  ) {}
+
+  async create(createUserDto: CreateUserDto) {
+    const indx = await this.usersTable.insert(createUserDto);
+    return await this.findOne(indx.identifiers[0].id);
   }
 
-  create(createUserDto: CreateUserDto) {
-    const timestamp = +new Date();
-    const newUser: User = {
-      ...createUserDto,
-      id: uuidv4(),
-      createdAt: timestamp,
-      updatedAt: timestamp,
-      version: 1,
-    };
-    this.db.users.push(newUser);
-    return newUser;
+  async findAll() {
+    return await this.usersTable.find();
   }
 
-  findAll() {
-    return this.db.users;
+  async findOne(id: string) {
+    return await getValidatedEntity(id, this.usersTable, 'User');
   }
 
-  findOne(id: string) {
-    return getValidatedEntity(id, this.db.users, 'User');
-  }
-
-  update(id: string, updatePasswordDto: UpdatePasswordDto) {
-    const currentUser = getValidatedEntity(id, this.db.users, 'User');
+  async update(id: string, updatePasswordDto: UpdatePasswordDto) {
+    const currentUser = await getValidatedEntity(id, this.usersTable, 'User');
     if (updatePasswordDto.oldPassword !== currentUser.password) {
       throw new ForbiddenException('Old password is wrong');
-    } else {
-      currentUser.password = updatePasswordDto.newPassword;
-      currentUser.updatedAt = +new Date();
-      currentUser.version = ++currentUser.version;
     }
-    return currentUser;
+    return await this.usersTable.save({ id: id, ...currentUser });
   }
 
-  remove(id: string) {
-    getValidatedEntity(id, this.db.users, 'User');
-    this.db.users = removeEntity(id, this.db.users);
+  async remove(id: string) {
+    getValidatedEntity(id, this.usersTable, 'User');
+    await this.usersTable.delete(id);
   }
 }

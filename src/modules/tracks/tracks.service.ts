@@ -40,11 +40,7 @@ export class TracksService {
   }
 
   update(id: string, updateTrackDto: UpdateTrackDto) {
-    const updatedTrack: UpdateTrackDto = getValidatedEntity(
-      id,
-      this.db.tracks,
-      'Track',
-    );
+    const updatedTrack: any = getValidatedEntity(id, this.db.tracks, 'Track');
     updatedTrack.name = updateTrackDto.name;
     updatedTrack.duration = updateTrackDto.duration;
     if (updateTrackDto.artistId) {

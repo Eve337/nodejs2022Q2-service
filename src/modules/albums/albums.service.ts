@@ -38,11 +38,7 @@ export class AlbumsService {
   }
 
   update(id: string, updateAlbumDto: UpdateAlbumDto) {
-    const updatedAlbum: UpdateAlbumDto = getValidatedEntity(
-      id,
-      this.db.albums,
-      'Album',
-    );
+    const updatedAlbum: any = getValidatedEntity(id, this.db.albums, 'Album');
     updatedAlbum.name = updateAlbumDto.name;
     updatedAlbum.year = updateAlbumDto.year;
     if (updateAlbumDto.artistId)

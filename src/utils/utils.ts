@@ -1,4 +1,5 @@
 import { BadRequestException, NotFoundException } from '@nestjs/common';
+import { Repository } from 'typeorm';
 import { validate as uuidValidate } from 'uuid';
 
 export const checkUuid = (id: string) => {
@@ -7,13 +8,13 @@ export const checkUuid = (id: string) => {
   }
 };
 
-export const getValidatedEntity = (
+export const getValidatedEntity = async (
   id: string,
   entityDb: any,
   nameOfEntity: string,
 ) => {
   checkUuid(id);
-  const entity = entityDb.find((current: { id: string }) => current.id === id);
+  const entity = await entityDb.findOneBy({ id });
 
   if (!entity) {
     throw new NotFoundException(`${nameOfEntity} is not found`);
