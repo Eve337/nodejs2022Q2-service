@@ -12,11 +12,13 @@ export class User {
   @IsNumber()
   version: number;
   @IsNumber() // integer number, increments on update
-  createdAt: number;
+  createdAt: Date | number;
   @IsNumber() // timestamp of creation
-  updatedAt: number; // timestamp of last update
+  updatedAt: Date | number; // timestamp of last update
 
   constructor(partial: Partial<User>) {
+    partial.createdAt = partial.createdAt.valueOf();
+    partial.updatedAt = partial.updatedAt.valueOf();
     Object.assign(this, partial);
   }
 }

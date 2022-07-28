@@ -10,7 +10,7 @@ import {
 @Entity()
 export class userSchema {
   @PrimaryGeneratedColumn('uuid')
-  id: number;
+  id: string;
 
   @Column()
   login: string;

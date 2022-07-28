@@ -9,9 +9,6 @@ export class albumSchema {
   name: string;
 
   @Column()
-  password: string;
-
-  @Column()
   year: number;
 
   @Column()
