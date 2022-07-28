@@ -1,11 +1,10 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-user.dto';
-import { getValidatedEntity, removeEntity } from 'src/utils/utils';
+import { getValidatedEntity } from 'src/utils/utils';
 import { Repository } from 'typeorm';
 import { userSchema } from 'src/database/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from './model/user';
 @Injectable()
 export class UsersService {
   constructor(

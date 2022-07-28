@@ -1,46 +1,36 @@
-import { FavouritesService } from './../favourites/favourites.service';
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { trackSchema } from './../../database/entities/track.entity';
+import { Injectable } from '@nestjs/common';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
-import { v4 as uuidv4 } from 'uuid';
-import { InMemoryDB } from 'src/utils/InMemoryDB';
-import {
-  getValidatedEntity,
-  removeEntity,
-  removeEntityAFromEntityB,
-} from 'src/utils/utils';
+import { getValidatedEntity } from 'src/utils/utils';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class TracksService {
-  db: typeof InMemoryDB;
   constructor(
-    @Inject(forwardRef(() => FavouritesService))
-    private readonly favouriteService: FavouritesService,
-  ) {
-    this.db = InMemoryDB;
-  }
-  create(createTrackDto: CreateTrackDto) {
-    const newTrack = {
-      artistId: null,
-      albumId: null,
-      ...createTrackDto,
-      id: uuidv4(),
-    };
-
-    this.db.tracks.push(newTrack);
-    return newTrack;
+    @InjectRepository(trackSchema)
+    private readonly tracksRepository: Repository<trackSchema>,
+  ) {}
+  async create(createTrackDto: CreateTrackDto) {
+    const newTrack = this.tracksRepository.create(createTrackDto);
+    return await this.tracksRepository.save(newTrack);
   }
 
-  findAll() {
-    return this.db.tracks;
+  async findAll() {
+    return await this.tracksRepository.find();
   }
 
-  findOne(id: string) {
-    return getValidatedEntity(id, this.db.tracks, 'Track');
+  async findOne(id: string) {
+    return getValidatedEntity(id, this.tracksRepository, 'Track');
   }
 
-  update(id: string, updateTrackDto: UpdateTrackDto) {
-    const updatedTrack: any = getValidatedEntity(id, this.db.tracks, 'Track');
+  async update(id: string, updateTrackDto: UpdateTrackDto) {
+    const updatedTrack: any = getValidatedEntity(
+      id,
+      this.tracksRepository,
+      'Track',
+    );
     updatedTrack.name = updateTrackDto.name;
     updatedTrack.duration = updateTrackDto.duration;
     if (updateTrackDto.artistId) {
@@ -49,19 +39,11 @@ export class TracksService {
     if (updateTrackDto.albumId) {
       updatedTrack.albumId = updateTrackDto.albumId;
     }
-    return updatedTrack;
+    return await this.tracksRepository.save(updatedTrack);
   }
 
-  remove(id: string) {
-    getValidatedEntity(id, this.db.tracks, 'Track');
-    this.db.tracks = removeEntity(id, this.db.tracks);
-    this.favouriteService.deleteTrackFromFav(id, false);
-  }
-
-  removeAlbumIdFromTrack(id: string) {
-    removeEntityAFromEntityB(id, this.db.tracks, 'albumId');
-  }
-  removeArtistFromTrack(id: string) {
-    removeEntityAFromEntityB(id, this.db.tracks, 'artistId');
+  async remove(id: string) {
+    getValidatedEntity(id, this.tracksRepository, 'Track');
+    await this.tracksRepository.delete(id);
   }
 }

@@ -49,8 +49,6 @@ export class AlbumsService {
   remove(id: string) {
     getValidatedEntity(id, this.db.albums, 'Album');
     this.db.albums = removeEntity(id, this.db.albums);
-    this.trackService.removeAlbumIdFromTrack(id);
-    this.favService.deleteAlbumFromFav(id, false);
   }
 
   removeArtistFromAlbum(id: string) {
