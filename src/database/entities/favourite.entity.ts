@@ -1,43 +1,24 @@
-import { trackSchema } from './track.entity';
-import { albumSchema } from './album.entity';
-import { artistSchema } from './artist.entity';
-import { Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { trackSchema } from 'src/database/entities/track.entity';
+import { albumSchema } from 'src/database/entities/album.entity';
+import { artistSchema } from 'src/database/entities/artist.entity';
+import { Exclude } from 'class-transformer';
+import { Entity, PrimaryGeneratedColumn, ManyToMany, JoinTable } from 'typeorm';
 
-@Entity('favs')
-export class favouriteSchema {
+@Entity('favorites')
+export class FavouriteSchema {
   @PrimaryGeneratedColumn('uuid')
-  idUser: number;
+  @Exclude()
+  id: string;
 
-  @ManyToMany(() => artistSchema, {
-    cascade: ['insert', 'update', 'remove'],
-    onDelete: 'CASCADE',
-  })
-  @JoinTable({
-    name: 'favourite_artists',
-    joinColumn: { name: 'fav_id', referencedColumnName: 'idUser' },
-    inverseJoinColumn: { name: 'artist_id', referencedColumnName: 'id' },
-  })
+  @ManyToMany(() => artistSchema, { cascade: true })
+  @JoinTable()
   artists: artistSchema[];
 
-  @ManyToMany(() => albumSchema, {
-    cascade: ['insert', 'update', 'remove'],
-    onDelete: 'CASCADE',
-  })
-  @JoinTable({
-    name: 'favourite_artists',
-    joinColumn: { name: 'fav_id', referencedColumnName: 'idUser' },
-    inverseJoinColumn: { name: 'album_id', referencedColumnName: 'id' },
-  })
+  @ManyToMany(() => albumSchema, { cascade: true })
+  @JoinTable()
   albums: albumSchema[];
 
-  @ManyToMany(() => trackSchema, {
-    cascade: ['insert', 'update', 'remove'],
-    onDelete: 'CASCADE',
-  })
-  @JoinTable({
-    name: 'favourite_artists',
-    joinColumn: { name: 'fav_id', referencedColumnName: 'idUser' },
-    inverseJoinColumn: { name: 'tracks_id', referencedColumnName: 'id' },
-  })
+  @ManyToMany(() => trackSchema, { cascade: true })
+  @JoinTable()
   tracks: trackSchema[];
 }

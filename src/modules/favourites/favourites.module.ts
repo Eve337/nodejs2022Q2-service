@@ -1,16 +1,16 @@
 import { artistSchema } from './../../database/entities/artist.entity';
 import { trackSchema } from './../../database/entities/track.entity';
 import { albumSchema } from './../../database/entities/album.entity';
-import { favouriteSchema } from './../../database/entities/favourite.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Module } from '@nestjs/common';
 import { FavouritesService } from './favourites.service';
 import { FavouritesController } from './favourites.controller';
+import { FavouriteSchema } from 'src/database/entities/favourite.entity';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
-      favouriteSchema,
+      FavouriteSchema,
       albumSchema,
       trackSchema,
       artistSchema,

@@ -1,7 +1,8 @@
+import { albums } from './../../utils/InMemoryDB';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { artistSchema } from './artist.entity';
 
-@Entity()
+@Entity('albums')
 export class albumSchema {
   @PrimaryGeneratedColumn('uuid')
   id: string;

@@ -2,7 +2,6 @@ import {
   Controller,
   Get,
   Post,
-  Body,
   Delete,
   HttpCode,
   HttpStatus,
@@ -16,35 +15,35 @@ export class FavouritesController {
 
   @Post('/track/:id')
   addTrack(@Param('id') id: string) {
-    return this.favouritesService.addTrackToFav(id);
+    return this.favouritesService.addEntity('Tracks', id);
   }
 
   @Delete('/track/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
   deleteTrack(@Param('id') id: string) {
-    return this.favouritesService.deleteTrackFromFav(id, true);
+    return this.favouritesService.removeEntity('Tracks', id);
   }
 
   @Post('/artist/:id')
   addArtist(@Param('id') id: string) {
-    return this.favouritesService.addArtistToFav(id);
+    return this.favouritesService.addEntity('Artists', id);
   }
 
   @Delete('/artist/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
   deleteArtist(@Param('id') id: string) {
-    return this.favouritesService.deleteArtistFromFav(id, true);
+    return this.favouritesService.removeEntity('Artists', id);
   }
 
   @Post('/album/:id')
   addAlbum(@Param('id') id: string) {
-    return this.favouritesService.addAlbumToFav(id);
+    return this.favouritesService.addEntity('Albums', id);
   }
 
   @Delete('/album/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
   deleteAlbum(@Param('id') id: string) {
-    return this.favouritesService.deleteAlbumFromFav(id, true);
+    return this.favouritesService.removeEntity('Albums', id);
   }
 
   @Get()
