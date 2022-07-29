@@ -1,102 +1,69 @@
-import { artists, track } from './../../utils/InMemoryDB';
-import { ArtistsService } from './../artists/artists.service';
-import { findById, removeEntity, removeEntityFav } from 'src/utils/utils';
-import { checkUuid, getValidatedEntity } from './../../utils/utils';
-import {
-  forwardRef,
-  Inject,
-  Injectable,
-  UnprocessableEntityException,
-} from '@nestjs/common';
-import { InMemoryDB } from 'src/utils/InMemoryDB';
-import { AlbumsService } from '../albums/albums.service';
-import { TracksService } from '../tracks/tracks.service';
+import { favouriteSchema } from './../../database/entities/favourite.entity';
+import { findById, removeEntityFav } from 'src/utils/utils';
+import { checkUuid } from './../../utils/utils';
+import { Injectable, UnprocessableEntityException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { albumSchema } from 'src/database/entities/album.entity';
+import { artistSchema } from 'src/database/entities/artist.entity';
+import { trackSchema } from 'src/database/entities/track.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class FavouritesService {
-  db: typeof InMemoryDB;
   constructor(
-    @Inject(forwardRef(() => TracksService))
-    private readonly trackService: TracksService,
-    @Inject(forwardRef(() => AlbumsService))
-    private readonly albumService: AlbumsService,
-    @Inject(forwardRef(() => ArtistsService))
-    private readonly artistsService: ArtistsService,
-  ) {
-    this.db = InMemoryDB;
+    @InjectRepository(artistSchema)
+    private readonly artistsRepository: Repository<artistSchema>,
+    @InjectRepository(trackSchema)
+    private readonly tracksRepository: Repository<trackSchema>,
+    @InjectRepository(albumSchema)
+    private readonly albumsRepository: Repository<albumSchema>,
+    @InjectRepository(favouriteSchema)
+    private readonly favouriteRepository: Repository<favouriteSchema>,
+  ) {}
+
+  async findAll() {
+    const [fav] = await this.favouriteRepository.find({
+      relations: ['artists', 'tracks', 'albums'],
+    });
+    return { albums: fav.albums, artists: fav.artists, tracks: fav.tracks };
   }
 
-  findAll() {
-    const tracks = this.db.favourites.tracks.map((id) =>
-      this.trackService.findOne(id),
-    );
-    const albums = this.db.favourites.albums.map((id) =>
-      this.albumService.findOne(id),
-    );
-    const artists = this.db.favourites.artists.map((id) =>
-      this.artistsService.findOne(id),
-    );
-    return {
-      artists,
-      albums,
-      tracks,
-    };
-  }
-
-  addTrackToFav(id: string) {
+  async addTrackToFav(id: string) {
     checkUuid(id);
-    const currentTrack = findById(id, this.db.tracks);
+    const currentTrack = await this.tracksRepository.findOneBy({ id });
     if (!currentTrack) {
       throw new UnprocessableEntityException('id === trackId does not exist');
     }
-    this.db.favourites.tracks.push(id);
     return currentTrack;
   }
 
   deleteTrackFromFav(id: string, isDirectReq: boolean) {
     if (isDirectReq) checkUuid(id);
-    this.db.favourites = {
-      ...this.db.favourites,
-      tracks: removeEntityFav(id, this.db.favourites.tracks),
-    };
   }
 
-  addArtistToFav(id: string) {
+  async addArtistToFav(id: string) {
     checkUuid(id);
-    const currentArtist = findById(id, this.db.artists);
+    const currentArtist = await this.artistsRepository.findOneBy({ id });
     if (!currentArtist) {
       throw new UnprocessableEntityException('id === artistId does not exist');
     }
-    this.db.favourites.artists.push(id);
     return currentArtist;
   }
 
   deleteArtistFromFav(id: string, isDirectReq: boolean) {
-    console.log(id);
     if (isDirectReq) checkUuid(id);
-    this.db.favourites = {
-      ...this.db.favourites,
-      artists: removeEntityFav(id, this.db.favourites.artists),
-    };
   }
 
-  addAlbumToFav(id: string) {
+  async addAlbumToFav(id: string) {
     checkUuid(id);
-    const currentAlbum = findById(id, this.db.albums);
+    const currentAlbum = await this.albumsRepository.findOneBy({ id });
     if (!currentAlbum) {
       throw new UnprocessableEntityException('id === albumId does not exist');
     }
-    this.db.favourites.albums.push(id);
     return currentAlbum;
   }
 
   deleteAlbumFromFav(id: string, isDirectReq: boolean) {
     if (isDirectReq) checkUuid(id);
-    console.log(this.db.favourites);
-    this.db.favourites = {
-      ...this.db.favourites,
-      albums: removeEntityFav(id, this.db.favourites.albums),
-    };
-    console.log(this.db.favourites);
   }
 }

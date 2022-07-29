@@ -10,7 +10,7 @@ export const checkUuid = (id: string) => {
 
 export const getValidatedEntity = async (
   id: string,
-  entityDb: any,
+  entityDb: Repository<any>,
   nameOfEntity: string,
 ) => {
   checkUuid(id);

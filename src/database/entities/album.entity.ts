@@ -4,7 +4,7 @@ import { artistSchema } from './artist.entity';
 @Entity()
 export class albumSchema {
   @PrimaryGeneratedColumn('uuid')
-  id: number;
+  id: string;
 
   @Column()
   name: string;

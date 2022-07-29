@@ -13,9 +13,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
   imports: [
     UsersModule,
     ArtistsModule,
-    /* 
     TracksModule,
     AlbumsModule,
+    /* 
+    
     FavouritesModule, */
     ConfigModule.forRoot(),
     TypeOrmModule.forRootAsync({
