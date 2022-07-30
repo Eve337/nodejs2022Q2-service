@@ -1,3 +1,6 @@
+import { TracksService } from './../tracks/tracks.service';
+import { AlbumsService } from './../albums/albums.service';
+import { ArtistsService } from './../artists/artists.service';
 import { artistSchema } from './../../database/entities/artist.entity';
 import { trackSchema } from './../../database/entities/track.entity';
 import { albumSchema } from './../../database/entities/album.entity';
@@ -17,6 +20,6 @@ import { FavouriteSchema } from 'src/database/entities/favourite.entity';
     ]),
   ],
   controllers: [FavouritesController],
-  providers: [FavouritesService],
+  providers: [FavouritesService, ArtistsService, AlbumsService, TracksService],
 })
 export class FavouritesModule {}

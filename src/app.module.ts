@@ -5,8 +5,6 @@ import { ArtistsModule } from './modules/artists/artists.module';
 import { FavouritesModule } from './modules/favourites/favourites.module';
 import { TracksModule } from './modules/tracks/tracks.module';
 import { UsersModule } from './modules/users/users.module';
-import { InMemoryDB } from './utils/InMemoryDB';
-import { DatabaseModule } from './database/database.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({

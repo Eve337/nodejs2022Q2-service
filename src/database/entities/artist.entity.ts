@@ -1,4 +1,7 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { trackSchema } from 'src/database/entities/track.entity';
+import { Exclude } from 'class-transformer';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { albumSchema } from './album.entity';
 
 @Entity('artists')
 export class artistSchema {
@@ -10,4 +13,12 @@ export class artistSchema {
 
   @Column()
   grammy: boolean;
+
+  @OneToMany(() => albumSchema, (album) => album.artist, { cascade: true })
+  @Exclude()
+  albums: albumSchema[];
+
+  @OneToMany(() => trackSchema, (track) => track.artist, { cascade: true })
+  @Exclude()
+  tracks: trackSchema[];
 }

@@ -1,5 +1,12 @@
-import { albums } from './../../utils/InMemoryDB';
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { trackSchema } from 'src/database/entities/track.entity';
+import { Exclude } from 'class-transformer';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { artistSchema } from './artist.entity';
 
 @Entity('albums')
@@ -13,13 +20,20 @@ export class albumSchema {
   @Column()
   year: number;
 
-  @OneToMany(() => artistSchema, (artist) => artist.id, {
+  @ManyToOne(() => artistSchema, (artist) => artist.albums, {
     nullable: true,
     onDelete: 'SET NULL',
-    cascade: ['insert', 'update', 'remove'],
+    // cascade: true,
   })
+  @Exclude()
   artist: string;
 
-  @Column()
+  @OneToMany(() => trackSchema, (track) => track.album, { cascade: true })
+  @Exclude()
+  tracks: trackSchema[];
+
+  @Column({
+    nullable: true,
+  })
   artistId: string;
 }

@@ -1,3 +1,4 @@
+import { checkUuid } from './../../utils/utils';
 import { albumSchema } from './../../database/entities/album.entity';
 import { Injectable } from '@nestjs/common';
 import { CreateAlbumDto } from './dto/create-album.dto';
@@ -26,6 +27,7 @@ export class AlbumsService {
   }
 
   async update(id: string, updateAlbumDto: UpdateAlbumDto) {
+    console.log(updateAlbumDto);
     const updatedAlbum: any = await getValidatedEntity(
       id,
       this.albumsRepository,
@@ -35,11 +37,11 @@ export class AlbumsService {
     updatedAlbum.year = updateAlbumDto.year;
     if (updateAlbumDto.artistId)
       updatedAlbum.artistId = updateAlbumDto.artistId;
-    return await this.albumsRepository.save(updateAlbumDto);
+    return await this.albumsRepository.save(updatedAlbum);
   }
 
   async remove(id: string) {
-    getValidatedEntity(id, this.albumsRepository, 'Album');
+    await getValidatedEntity(id, this.albumsRepository, 'Album');
     await this.albumsRepository.delete(id);
   }
 }

@@ -15,35 +15,35 @@ export class FavouritesController {
 
   @Post('/track/:id')
   addTrack(@Param('id') id: string) {
-    return this.favouritesService.addEntity('Tracks', id);
+    return this.favouritesService.addEntity('tracks', id);
   }
 
   @Delete('/track/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
   deleteTrack(@Param('id') id: string) {
-    return this.favouritesService.removeEntity('Tracks', id);
+    return this.favouritesService.removeEntity('tracks', id);
   }
 
   @Post('/artist/:id')
   addArtist(@Param('id') id: string) {
-    return this.favouritesService.addEntity('Artists', id);
+    return this.favouritesService.addEntity('artists', id);
   }
 
   @Delete('/artist/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
   deleteArtist(@Param('id') id: string) {
-    return this.favouritesService.removeEntity('Artists', id);
+    return this.favouritesService.removeEntity('artists', id);
   }
 
   @Post('/album/:id')
   addAlbum(@Param('id') id: string) {
-    return this.favouritesService.addEntity('Albums', id);
+    return this.favouritesService.addEntity('albums', id);
   }
 
   @Delete('/album/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
   deleteAlbum(@Param('id') id: string) {
-    return this.favouritesService.removeEntity('Albums', id);
+    return this.favouritesService.removeEntity('albums', id);
   }
 
   @Get()

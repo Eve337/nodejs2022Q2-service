@@ -22,11 +22,11 @@ export class TracksService {
   }
 
   async findOne(id: string) {
-    return getValidatedEntity(id, this.tracksRepository, 'Track');
+    return await getValidatedEntity(id, this.tracksRepository, 'Track');
   }
 
   async update(id: string, updateTrackDto: UpdateTrackDto) {
-    const updatedTrack: any = getValidatedEntity(
+    const updatedTrack: any = await getValidatedEntity(
       id,
       this.tracksRepository,
       'Track',
@@ -43,7 +43,7 @@ export class TracksService {
   }
 
   async remove(id: string) {
-    getValidatedEntity(id, this.tracksRepository, 'Track');
+    await getValidatedEntity(id, this.tracksRepository, 'Track');
     await this.tracksRepository.delete(id);
   }
 }

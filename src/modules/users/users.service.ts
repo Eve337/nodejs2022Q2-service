@@ -39,7 +39,7 @@ export class UsersService {
   }
 
   async remove(id: string) {
-    getValidatedEntity(id, this.usersRepository, 'User');
+    await getValidatedEntity(id, this.usersRepository, 'User');
     await this.usersRepository.delete(id);
   }
 }

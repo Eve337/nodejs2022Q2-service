@@ -4,6 +4,8 @@ import { ArtistsService } from './../artists/artists.service';
 import { FavouriteSchema } from './../../database/entities/favourite.entity';
 import { checkUuid } from './../../utils/utils';
 import {
+  forwardRef,
+  Inject,
   Injectable,
   NotFoundException,
   UnprocessableEntityException,
@@ -14,7 +16,7 @@ import { artistSchema } from 'src/database/entities/artist.entity';
 import { trackSchema } from 'src/database/entities/track.entity';
 import { Repository } from 'typeorm';
 
-export type favEntity = 'Artists' | 'Albums' | 'Tracks';
+export type favEntity = 'artists' | 'albums' | 'tracks';
 type serviceEntity = ArtistsService | AlbumsService | TracksService;
 @Injectable()
 export class FavouritesService {
@@ -27,6 +29,12 @@ export class FavouritesService {
     private readonly albumsRepository: Repository<albumSchema>,
     @InjectRepository(FavouriteSchema)
     private readonly favouriteRepository: Repository<FavouriteSchema>,
+    @Inject(forwardRef(() => ArtistsService))
+    private artistsService: ArtistsService,
+    @Inject(forwardRef(() => AlbumsService))
+    private albumsService: AlbumsService,
+    @Inject(forwardRef(() => TracksService))
+    private tracksService: TracksService,
   ) {}
 
   async findAll() {
@@ -39,8 +47,8 @@ export class FavouritesService {
   }
 
   async addEntity(typeOfEntity: favEntity, id: string) {
+    checkUuid(id);
     const currentService: serviceEntity = this[`${typeOfEntity}Service`];
-
     try {
       const entity = await currentService.findOne(id);
       let favourite = await this.favouriteRepository.findOne({ where: {} });
@@ -56,7 +64,7 @@ export class FavouritesService {
       await this.favouriteRepository.save(favourite);
 
       return id;
-    } catch {
+    } catch (err) {
       throw new UnprocessableEntityException();
     }
   }

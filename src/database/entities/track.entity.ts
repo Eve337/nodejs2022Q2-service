@@ -1,6 +1,7 @@
 import { albumSchema } from './album.entity';
 import { artistSchema } from './artist.entity';
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Type, Exclude } from 'class-transformer';
 
 @Entity('tracks')
 export class trackSchema {
@@ -10,29 +11,27 @@ export class trackSchema {
   @Column()
   name: string;
 
-  @Column()
-  password: string;
+  @Column({ nullable: false })
+  @Type(() => Number)
+  duration: number;
 
-  @OneToMany(() => artistSchema, (artist) => artist.id, {
-    nullable: true,
-    onDelete: 'SET NULL',
-    cascade: ['insert', 'update', 'remove'],
-  })
-  artist: string;
-
-  @Column()
-  artistId: string | null;
-
-  @OneToMany(() => albumSchema, (album) => album.id, {
-    nullable: true,
-    onDelete: 'SET NULL',
-    cascade: ['insert', 'update', 'remove'],
-  })
-  album: string;
-
-  @Column()
+  @Column({ nullable: true })
   albumId: string | null;
 
-  @Column()
-  duration: number;
+  @Column({ nullable: true })
+  artistId: string | null;
+
+  @ManyToOne(() => albumSchema, (album) => album.tracks, {
+    nullable: true,
+    onDelete: 'SET NULL',
+  })
+  @Exclude()
+  album: albumSchema;
+
+  @ManyToOne(() => artistSchema, (artist) => artist.tracks, {
+    nullable: true,
+    onDelete: 'SET NULL',
+  })
+  @Exclude()
+  artist: artistSchema;
 }
